@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: oxiom
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1234
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mongo
+      username: mongo
+      password: 1234
+    redis:
+      url: redis://localhost:6379
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        show_sql: true
+        format_sql: true
+        highlight_sql: true
+jwt:
+  secret: ${JWT_SECRET_STRING:dGhpcyBpcyBteSBoaWRkZW4gand0IHNlY3JldCBrZXksIHdoYXQgaXMgeW91ciBqd3Qgc2VjcmV0IGtleT8=}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
