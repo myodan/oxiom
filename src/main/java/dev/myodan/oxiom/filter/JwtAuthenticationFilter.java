@@ -1,6 +1,5 @@
 package dev.myodan.oxiom.filter;
 
-import dev.myodan.oxiom.domain.Role;
 import dev.myodan.oxiom.domain.User;
 import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.util.JwtUtil;
@@ -34,17 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+        User user = jwtUtil.validateToken(token);
 
-        if (!jwtUtil.validateToken(token)) {
+        if (user == null) {
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        User user = User.builder()
-                .username(jwtUtil.extractSubject(token))
-                .role(Role.valueOf(jwtUtil.extractRole(token)))
-                .build();
 
         UserPrincipal userPrincipal = new UserPrincipal(user);
 

@@ -3,13 +3,7 @@ package dev.myodan.oxiom.dto;
 import lombok.Builder;
 
 @Builder
-public record UserResponse(
-
-        Long id,
-
-        String username,
-
-        String email,
+public record UserUpdateRequest(
 
         String displayName
 

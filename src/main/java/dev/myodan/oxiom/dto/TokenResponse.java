@@ -2,8 +2,6 @@ package dev.myodan.oxiom.dto;
 
 import lombok.Builder;
 
-import java.io.Serializable;
-
 @Builder
 public record TokenResponse(
 
@@ -11,5 +9,5 @@ public record TokenResponse(
 
         String refreshToken
 
-) implements Serializable {
+) {
 }

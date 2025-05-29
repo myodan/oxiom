@@ -1,13 +1,15 @@
 package dev.myodan.oxiom.controller;
 
-import dev.myodan.oxiom.dto.UserRequest;
+import dev.myodan.oxiom.dto.UserCreateRequest;
 import dev.myodan.oxiom.dto.UserResponse;
+import dev.myodan.oxiom.dto.UserUpdateRequest;
 import dev.myodan.oxiom.service.UserService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -19,18 +21,29 @@ public class UserController {
 
     private final UserService userService;
 
-    @PermitAll
     @GetMapping
-    public ResponseEntity<?> getUsers(Pageable pageable) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<UserResponse>> getUsers(Pageable pageable) {
         return ResponseEntity.ok(userService.getUsers(pageable));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) {
-        UserResponse userResponse = userService.createUser(userRequest);
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest userCreateRequest) {
+        UserResponse userResponse = userService.createUser(userCreateRequest);
         URI location = URI.create("/users/" + userResponse.id());
 
         return ResponseEntity.created(location).body(userResponse);
     }
 
+    @PatchMapping("/{id}")
+    @PreAuthorize("#id eq authentication.principal.id")
+    public ResponseEntity<UserResponse> partialUpdateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+        return ResponseEntity.ok(userService.partialUpdateUser(id, userUpdateRequest));
+    }
 }

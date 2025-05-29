@@ -1,6 +1,6 @@
 package dev.myodan.oxiom.util;
 
-import dev.myodan.oxiom.domain.UserPrincipal;
+import dev.myodan.oxiom.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -17,7 +17,8 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private static final String JWT_USERNAME_KEY = "username";
+    private static final String JWT_USER_ID_KEY = "uid";
+    private static final String JWT_USERNAME_KEY = "uname";
     private static final String JWT_ROLE_KEY = "role";
     private static final String JWT_EMAIL_KEY = "email";
 
@@ -44,27 +45,41 @@ public class JwtUtil {
         return claimResolver.apply(claims);
     }
 
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get(JWT_USER_ID_KEY, Long.class));
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, claims -> claims.get(JWT_USERNAME_KEY, String.class));
+    }
+
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get(JWT_ROLE_KEY, String.class));
     }
 
-    public String extractSubject(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get(JWT_EMAIL_KEY, String.class));
     }
 
-    public boolean validateToken(String token) {
+    public User validateToken(String token) {
         try {
-            extractAllClaims(token);
-            return true;
+            return User.builder()
+                    .id(this.extractUserId(token))
+                    .username(this.extractUsername(token))
+                    .role(User.Role.valueOf(this.extractRole(token)))
+                    .email(this.extractEmail(token))
+                    .build();
         } catch (JwtException exception) {
-            return false;
+            return null;
         }
     }
 
-    public String issueToken(UserPrincipal userPrincipal) {
+    public String issueToken(User user) {
         return Jwts.builder()
-                .claim(JWT_ROLE_KEY, userPrincipal.getAuthorities().iterator().next().getAuthority())
-                .subject(userPrincipal.getUsername())
+                .claim(JWT_USER_ID_KEY, user.getId())
+                .claim(JWT_USERNAME_KEY, user.getUsername())
+                .claim(JWT_ROLE_KEY, user.getRole().name())
+                .claim(JWT_EMAIL_KEY, user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(this.getSecretKey())

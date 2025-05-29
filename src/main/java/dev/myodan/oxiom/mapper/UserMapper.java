@@ -1,11 +1,10 @@
 package dev.myodan.oxiom.mapper;
 
 import dev.myodan.oxiom.domain.User;
-import dev.myodan.oxiom.dto.UserRequest;
+import dev.myodan.oxiom.dto.UserCreateRequest;
 import dev.myodan.oxiom.dto.UserResponse;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import dev.myodan.oxiom.dto.UserUpdateRequest;
+import org.mapstruct.*;
 
 @Mapper(
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -15,8 +14,11 @@ public interface UserMapper {
 
     User toEntity(UserResponse userResponse);
 
-    User toEntity(UserRequest userRequest);
+    User toEntity(UserCreateRequest userCreateRequest);
 
     UserResponse toResponse(User user);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    User partialUpdate(UserUpdateRequest userResponse, @MappingTarget User user);
 
 }

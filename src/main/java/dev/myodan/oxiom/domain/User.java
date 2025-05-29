@@ -1,19 +1,21 @@
 package dev.myodan.oxiom.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-@Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+
 public class User {
 
     @Id
@@ -33,18 +35,17 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    private String displayName;
+
     @CreatedDate
     private Instant createdDate;
 
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    @Builder
-    public User(String username, String password, Role role, String email) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.email = email;
+    public enum Role {
+        ROLE_ADMIN,
+        ROLE_USER
     }
-    
+
 }
