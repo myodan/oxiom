@@ -3,6 +3,7 @@ package dev.myodan.oxiom.mapper;
 import dev.myodan.oxiom.domain.Product;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
+import dev.myodan.oxiom.dto.ProductSummaryResponse;
 import org.mapstruct.*;
 
 @Mapper(
@@ -22,6 +23,8 @@ public interface ProductMapper {
     }
 
     ProductResponse toResponse(Product product);
+
+    ProductSummaryResponse toSummaryResponse(Product product);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Product partialUpdate(ProductResponse productResponse, @MappingTarget Product product);

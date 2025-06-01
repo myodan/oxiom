@@ -1,5 +1,6 @@
 package dev.myodan.oxiom.dto;
 
+import dev.myodan.oxiom.domain.Category;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -14,10 +15,13 @@ import java.util.List;
 public record ProductRequest(
 
         @NotBlank
-        String title,
+        String name,
 
         @NotBlank
         String description,
+
+        @NotBlank
+        String thumbnailUrl,
 
         @NotNull
         List<@Valid ProductImageRequest> images,
@@ -32,7 +36,10 @@ public record ProductRequest(
 
         @NotNull
         @Future
-        Instant endDate
+        Instant endDate,
+
+        @NotNull
+        Category category
 
 ) {
 }

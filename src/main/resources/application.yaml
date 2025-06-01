@@ -1,23 +1,26 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: oxiom
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 1234
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
   data:
     mongodb:
-      uri: mongodb://localhost:27017/mongo
-      username: mongo
-      password: 1234
+      uri: ${MONGODB_URL}
     redis:
-      url: redis://localhost:6379
+      url: ${REDIS_URL}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         jdbc:
@@ -29,5 +32,5 @@ spring:
         format_sql: true
         highlight_sql: true
 jwt:
-  secret: ${JWT_SECRET_STRING:dGhpcyBpcyBteSBoaWRkZW4gand0IHNlY3JldCBrZXksIHdoYXQgaXMgeW91ciBqd3Qgc2VjcmV0IGtleT8=}
-  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+  secret: ${JWT_SECRET_STRING}
+  expiration-ms: ${JWT_EXPIRATION_MS:360000}

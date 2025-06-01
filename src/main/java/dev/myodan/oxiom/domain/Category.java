@@ -11,25 +11,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(
-        name = "product_image",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"product_id", "order"})
-        }
-)
-public class ProductImage {
+public class Category {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Product product;
-
     @Column(columnDefinition = "text", nullable = false)
-    private String url;
-
-    @Column(nullable = false)
-    private Integer order;
+    private String name;
 
 }

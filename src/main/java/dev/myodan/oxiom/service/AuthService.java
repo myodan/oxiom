@@ -7,7 +7,7 @@ import dev.myodan.oxiom.dto.TokenResponse;
 import dev.myodan.oxiom.repository.UserRepository;
 import dev.myodan.oxiom.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
@@ -35,7 +35,7 @@ public class AuthService {
 
         String accessToken = jwtUtil.issueToken(user);
         String refreshToken = Base64.getUrlEncoder().withoutPadding().encodeToString(KeyGenerators.secureRandom(32).generateKey());
-        redisTemplate.opsForValue().set("refresh-token:" + refreshToken, user.getId(), Duration.ofDays(7));
+        stringRedisTemplate.opsForValue().set("refresh-token:" + refreshToken, user.getId().toString(), Duration.ofDays(7));
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -44,9 +44,9 @@ public class AuthService {
     }
 
     public TokenResponse refreshToken(String refreshToken) {
-        Long userId = (Long) Optional.ofNullable(redisTemplate.opsForValue().get("refresh-token:" + refreshToken)).orElseThrow(
+        Long userId = Long.valueOf(Optional.ofNullable(stringRedisTemplate.opsForValue().get("refresh-token:" + refreshToken)).orElseThrow(
                 () -> new IllegalArgumentException("Invalid refresh token.")
-        );
+        ));
 
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("User not found.")
@@ -54,8 +54,8 @@ public class AuthService {
 
         String newAccessToken = jwtUtil.issueToken(user);
         String newRefreshToken = Base64.getUrlEncoder().withoutPadding().encodeToString(KeyGenerators.secureRandom(32).generateKey());
-        redisTemplate.delete("refresh-token:" + refreshToken);
-        redisTemplate.opsForValue().set("refresh-token:" + newRefreshToken, user.getId(), Duration.ofDays(7));
+        stringRedisTemplate.delete("refresh-token:" + refreshToken);
+        stringRedisTemplate.opsForValue().set("refresh-token:" + newRefreshToken, user.getId().toString(), Duration.ofDays(7));
 
         return TokenResponse.builder()
                 .accessToken(newAccessToken)

@@ -1,23 +1,24 @@
 package dev.myodan.oxiom.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.Message;
-import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
-import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager.Builder;
+import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
+import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocketSecurity
-public class SocketSecurityConfig {
+public class SocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
-    @Bean
-    AuthorizationManager<Message<?>> messageAuthorizationManager(Builder messages) {
-        return messages
+    @Override
+    protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
+        messages
+                .nullDestMatcher().permitAll()
                 .simpSubscribeDestMatchers("/sub/products").permitAll()
                 .simpDestMatchers("/pub/products").permitAll()
-                .anyMessage().denyAll()
-                .build();
+                .anyMessage().denyAll();
+    }
+
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
     }
 
 }

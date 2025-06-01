@@ -23,11 +23,14 @@ public class Product {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(columnDefinition = "text", nullable = false)
+    private String name;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String description;
+
+    @Column(columnDefinition = "text")
+    private String thumbnailUrl;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("order ASC")
@@ -47,6 +50,9 @@ public class Product {
 
     @Column(nullable = false)
     private Instant endDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Category category;
 
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)

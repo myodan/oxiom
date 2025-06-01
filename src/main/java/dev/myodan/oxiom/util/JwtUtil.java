@@ -21,6 +21,7 @@ public class JwtUtil {
     private static final String JWT_USERNAME_KEY = "uname";
     private static final String JWT_ROLE_KEY = "role";
     private static final String JWT_EMAIL_KEY = "email";
+    private static final String JWT_AVATAR_URL_KEY = "avatar";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -61,6 +62,10 @@ public class JwtUtil {
         return extractClaim(token, claims -> claims.get(JWT_EMAIL_KEY, String.class));
     }
 
+    public String extractAvatarUrl(String token) {
+        return extractClaim(token, claims -> claims.get(JWT_AVATAR_URL_KEY, String.class));
+    }
+
     public User validateToken(String token) {
         try {
             return User.builder()
@@ -68,6 +73,7 @@ public class JwtUtil {
                     .username(this.extractUsername(token))
                     .role(User.Role.valueOf(this.extractRole(token)))
                     .email(this.extractEmail(token))
+                    .avatarUrl(this.extractAvatarUrl(token))
                     .build();
         } catch (JwtException exception) {
             return null;
@@ -80,6 +86,7 @@ public class JwtUtil {
                 .claim(JWT_USERNAME_KEY, user.getUsername())
                 .claim(JWT_ROLE_KEY, user.getRole().name())
                 .claim(JWT_EMAIL_KEY, user.getEmail())
+                .claim(JWT_AVATAR_URL_KEY, user.getAvatarUrl())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(this.getSecretKey())

@@ -15,27 +15,30 @@ import java.time.Instant;
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-
 public class User {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(columnDefinition = "text", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false, unique = true)
+    @Column(columnDefinition = "text", nullable = false, unique = true)
     private String email;
 
+    @Column(columnDefinition = "text")
     private String displayName;
+
+    @Column(columnDefinition = "text")
+    private String avatarUrl;
 
     @CreatedDate
     private Instant createdDate;

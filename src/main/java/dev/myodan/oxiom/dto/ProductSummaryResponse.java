@@ -1,9 +1,8 @@
 package dev.myodan.oxiom.dto;
 
 import java.time.Instant;
-import java.util.List;
 
-public record ProductResponse(
+public record ProductSummaryResponse(
 
         Long id,
 
@@ -12,8 +11,6 @@ public record ProductResponse(
         String description,
 
         String thumbnailUrl,
-
-        List<ProductImageResponse> images,
 
         UserResponse highestBidder,
 

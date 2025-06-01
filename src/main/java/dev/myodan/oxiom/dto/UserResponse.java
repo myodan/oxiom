@@ -11,7 +11,9 @@ public record UserResponse(
 
         String email,
 
-        String displayName
+        String displayName,
+
+        String avatarUrl
 
 ) {
 }

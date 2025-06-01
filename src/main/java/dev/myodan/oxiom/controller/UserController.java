@@ -1,8 +1,10 @@
 package dev.myodan.oxiom.controller;
 
+import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.dto.UserCreateRequest;
 import dev.myodan.oxiom.dto.UserResponse;
 import dev.myodan.oxiom.dto.UserUpdateRequest;
+import dev.myodan.oxiom.mapper.UserMapper;
 import dev.myodan.oxiom.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -20,6 +23,7 @@ import java.net.URI;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -28,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
@@ -42,8 +46,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("#id eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> partialUpdateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(userService.partialUpdateUser(id, userUpdateRequest));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getUserByMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(userService.getUser(userPrincipal.getId()));
+    }
+
 }

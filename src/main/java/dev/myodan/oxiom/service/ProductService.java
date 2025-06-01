@@ -3,6 +3,7 @@ package dev.myodan.oxiom.service;
 import dev.myodan.oxiom.domain.Product;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
+import dev.myodan.oxiom.dto.ProductSummaryResponse;
 import dev.myodan.oxiom.mapper.ProductMapper;
 import dev.myodan.oxiom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
-    public Page<ProductResponse> getProducts(Pageable pageable) {
-        return productRepository.findAll(pageable).map(productMapper::toResponse);
+    public Page<ProductSummaryResponse> getProducts(String keyword, Long categoryId, Pageable pageable) {
+        return productRepository.findAllByKeywordAndCategoryId(keyword, categoryId, pageable).map(productMapper::toSummaryResponse);
     }
 
     @Transactional(readOnly = true)
