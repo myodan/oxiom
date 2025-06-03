@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -20,5 +22,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """)
     @EntityGraph(attributePaths = {"highestBidder", "category", "createdBy"})
     Page<Product> findAllByKeywordAndCategoryId(String keyword, Long categoryId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"images", "highestBidder", "category", "createdBy"})
+    Optional<Product> findOneById(Long id);
 
 }

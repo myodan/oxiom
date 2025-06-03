@@ -1,9 +1,8 @@
 package dev.myodan.oxiom.controller;
 
 import dev.myodan.oxiom.domain.UserPrincipal;
-import dev.myodan.oxiom.dto.ProductRequest;
-import dev.myodan.oxiom.dto.ProductResponse;
-import dev.myodan.oxiom.dto.ProductSummaryResponse;
+import dev.myodan.oxiom.dto.*;
+import dev.myodan.oxiom.service.BidService;
 import dev.myodan.oxiom.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,7 @@ import java.net.URI;
 public class ProductController {
 
     private final ProductService productService;
+    private final BidService bidService;
 
     @GetMapping
     public ResponseEntity<Page<ProductSummaryResponse>> getProducts(String keyword, Long categoryId, Pageable pageable) {
@@ -42,6 +42,19 @@ public class ProductController {
         URI location = URI.create("/products/" + productResponse.id());
 
         return ResponseEntity.created(location).body(productResponse);
+    }
+
+    @GetMapping("/{id}/bids")
+    public ResponseEntity<Page<BidResponse>> getProductBids(@PathVariable Long id, Pageable pageable) {
+        return ResponseEntity.ok(bidService.getBidsByProductId(id, pageable));
+    }
+
+    @PostMapping("/{id}/bids")
+    public ResponseEntity<BidResponse> createProductBid(@PathVariable Long id, @RequestBody @Valid BidRequest bidRequest) {
+        BidResponse bidResponse = bidService.createBidByProductId(id, bidRequest);
+        URI location = URI.create("/products/" + id + "/bids");
+
+        return ResponseEntity.created(location).body(bidResponse);
     }
 
     @MessageMapping

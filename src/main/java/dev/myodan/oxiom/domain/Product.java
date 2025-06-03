@@ -33,11 +33,15 @@ public class Product {
     private String thumbnailUrl;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("order ASC")
+    @OrderBy("order asc")
     private List<ProductImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User highestBidder;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdDate desc")
+    private List<Bid> bids = new ArrayList<>();
 
     @Column(nullable = false)
     private Integer bidUnit;
@@ -52,13 +56,16 @@ public class Product {
     private Instant endDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(nullable = false)
     private Category category;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(nullable = false, updatable = false)
     private User createdBy;
 
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private Instant createdDate;
 
 }

@@ -35,12 +35,16 @@ public class User {
     private String email;
 
     @Column(columnDefinition = "text")
+    private String avatarUrl;
+
+    @Column(columnDefinition = "text")
     private String displayName;
 
     @Column(columnDefinition = "text")
-    private String avatarUrl;
+    private String bio;
 
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private Instant createdDate;
 
     @LastModifiedDate

@@ -26,7 +26,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Long id) {
-        return productRepository.findById(id).map(productMapper::toResponse).orElseThrow(
+        return productRepository.findOneById(id).map(productMapper::toResponse).orElseThrow(
                 () -> new IllegalArgumentException("Product not found.")
         );
     }
