@@ -2,10 +2,13 @@ package dev.myodan.oxiom.dto;
 
 import java.time.Instant;
 
-public record BidResponse(
+public record FavoriteResponse(
+
         Long id,
-        Long price,
-        UserResponse createdBy,
+
+        ProductSummaryResponse product,
+
         Instant createdDate
+
 ) {
 }

@@ -27,13 +27,19 @@ public class BidService {
     }
 
     @Transactional
-    public BidResponse createBidByProductId(Long productId, BidRequest bidRequest) {
+    public BidResponse createBid(Long productId, BidRequest bidRequest) {
         Product product = productRepository.findOneById(productId).orElseThrow(
-                () -> new IllegalArgumentException("Product not found.")
+                () -> new IllegalArgumentException("상품을 찾을 수 없습니다.")
         );
+
+        if (product.getCurrentPrice() >= bidRequest.price()) {
+            throw new IllegalArgumentException("요청한 입찰의 금액이 기존 입찰 금액보다 적습니다.");
+        }
 
         Bid bid = bidMapper.toEntity(bidRequest);
         bid.setProduct(product);
+
+        product.setCurrentPrice(bidRequest.price());
 
         return bidMapper.toResponse(bidRepository.save(bid));
     }

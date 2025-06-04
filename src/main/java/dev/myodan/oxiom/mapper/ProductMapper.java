@@ -15,18 +15,17 @@ public interface ProductMapper {
 
     Product toEntity(ProductResponse productResponse);
 
-    Product toEntity(ProductRequest productRequest);
+    Product toEntity(ProductSummaryResponse productSummaryResponse);
 
-    @AfterMapping
-    default void linkImages(@MappingTarget Product product) {
-        product.getImages().forEach(image -> image.setProduct(product));
-    }
+    Product toEntity(ProductRequest productRequest);
 
     ProductResponse toResponse(Product product);
 
     ProductSummaryResponse toSummaryResponse(Product product);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Product partialUpdate(ProductResponse productResponse, @MappingTarget Product product);
+    @AfterMapping
+    default void linkImages(@MappingTarget Product product) {
+        product.getImages().forEach(image -> image.setProduct(product));
+    }
 
 }

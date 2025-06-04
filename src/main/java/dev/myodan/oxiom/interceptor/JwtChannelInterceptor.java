@@ -28,7 +28,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         Assert.notNull(accessor, "No StompHeaderAccessor found.");
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (!StompCommand.CONNECT.equals(accessor.getCommand())) {
             return message;
         }
 

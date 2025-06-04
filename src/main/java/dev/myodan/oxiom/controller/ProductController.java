@@ -51,7 +51,7 @@ public class ProductController {
 
     @PostMapping("/{id}/bids")
     public ResponseEntity<BidResponse> createProductBid(@PathVariable Long id, @RequestBody @Valid BidRequest bidRequest) {
-        BidResponse bidResponse = bidService.createBidByProductId(id, bidRequest);
+        BidResponse bidResponse = bidService.createBid(id, bidRequest);
         URI location = URI.create("/products/" + id + "/bids");
 
         return ResponseEntity.created(location).body(bidResponse);

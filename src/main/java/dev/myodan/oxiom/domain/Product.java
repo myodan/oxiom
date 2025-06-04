@@ -44,13 +44,13 @@ public class Product {
     private List<Bid> bids = new ArrayList<>();
 
     @Column(nullable = false)
-    private Integer bidUnit;
+    private Long bidUnit;
 
     @Column(nullable = false)
-    private Integer initialPrice;
+    private Long initialPrice;
 
     @Column(nullable = false)
-    private Integer currentPrice;
+    private Long currentPrice;
 
     @Column(nullable = false)
     private Instant endDate;

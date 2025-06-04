@@ -11,8 +11,8 @@ public class SocketSecurityConfig extends AbstractSecurityWebSocketMessageBroker
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
                 .nullDestMatcher().permitAll()
-                .simpSubscribeDestMatchers("/sub/products").permitAll()
-                .simpDestMatchers("/pub/products").permitAll()
+                .simpSubscribeDestMatchers("/sub/chatrooms/**").authenticated()
+                .simpDestMatchers("/pub/chatrooms/**").authenticated()
                 .anyMessage().denyAll();
     }
 

@@ -4,7 +4,6 @@ import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.dto.UserCreateRequest;
 import dev.myodan.oxiom.dto.UserResponse;
 import dev.myodan.oxiom.dto.UserUpdateRequest;
-import dev.myodan.oxiom.mapper.UserMapper;
 import dev.myodan.oxiom.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.net.URI;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -32,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') || #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
@@ -46,7 +44,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') || #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> partialUpdateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(userService.partialUpdateUser(id, userUpdateRequest));
     }

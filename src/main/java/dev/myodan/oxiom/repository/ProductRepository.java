@@ -14,11 +14,11 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("""
-            SELECT p
-            FROM Product p
-            WHERE
-                (:categoryId IS NULL OR p.category.id = :categoryId) AND
-                (LOWER(p.name) LIKE CONCAT('%', LOWER(COALESCE(:keyword, '')), '%') OR LOWER(p.description) LIKE CONCAT('%', LOWER(COALESCE(:keyword, '')), '%'))
+            select p
+            from Product p
+            where
+                (:categoryId is null or p.category.id = :categoryId) and
+                (lower(p.name) like concat('%', lower(coalesce(:keyword, '')), '%') or lower(p.description) like concat('%', lower(coalesce(:keyword, '')), '%'))
             """)
     @EntityGraph(attributePaths = {"highestBidder", "category", "createdBy"})
     Page<Product> findAllByKeywordAndCategoryId(String keyword, Long categoryId, Pageable pageable);

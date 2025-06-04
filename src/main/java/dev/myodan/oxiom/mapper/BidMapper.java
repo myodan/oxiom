@@ -18,7 +18,4 @@ public interface BidMapper {
 
     BidResponse toResponse(Bid bid);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Bid partialUpdate(BidResponse bidResponse, @MappingTarget Bid bid);
-
 }
