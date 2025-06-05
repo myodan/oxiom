@@ -1,7 +1,10 @@
 package dev.myodan.oxiom.dto;
 
+import lombok.Builder;
+
 import java.time.Instant;
 
+@Builder
 public record ChatRoomResponse(
 
         Long id,
@@ -10,6 +13,9 @@ public record ChatRoomResponse(
 
         UserResponse user2,
 
+        ChatMessageResponse lastChatMessage,
+
         Instant createdDate
+
 ) {
 }

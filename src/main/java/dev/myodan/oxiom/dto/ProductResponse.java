@@ -1,8 +1,11 @@
 package dev.myodan.oxiom.dto;
 
+import lombok.Builder;
+
 import java.time.Instant;
 import java.util.List;
 
+@Builder
 public record ProductResponse(
 
         Long id,
@@ -17,11 +20,11 @@ public record ProductResponse(
 
         UserResponse highestBidder,
 
-        Integer bidUnit,
+        Long bidUnit,
 
-        Integer initialPrice,
+        Long initialPrice,
 
-        Integer currentPrice,
+        Long currentPrice,
 
         Instant endDate,
 

@@ -14,11 +14,11 @@ public record ProductSummaryResponse(
 
         UserResponse highestBidder,
 
-        Integer bidUnit,
+        Long bidUnit,
 
-        Integer initialPrice,
+        Long initialPrice,
 
-        Integer currentPrice,
+        Long currentPrice,
 
         Instant endDate,
 

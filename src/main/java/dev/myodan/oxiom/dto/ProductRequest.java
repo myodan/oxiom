@@ -28,11 +28,11 @@ public record ProductRequest(
 
         @NotNull
         @Positive
-        Integer bidUnit,
+        Long bidUnit,
 
         @NotNull
         @Positive
-        Integer initialPrice,
+        Long initialPrice,
 
         @NotNull
         @Future

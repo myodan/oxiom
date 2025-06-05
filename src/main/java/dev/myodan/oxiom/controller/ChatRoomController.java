@@ -25,30 +25,35 @@ import java.net.URI;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/chatrooms")
+@RequestMapping("/chat-rooms")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') || #id eq authentication.principal.id")
-    public ResponseEntity<Page<ChatRoomResponse>> getChatRoom(@RequestParam Long id, Pageable pageable) {
-        return ResponseEntity.ok(chatRoomService.getChatRoomsByUserId(id, pageable));
+    @PreAuthorize("hasRole('ADMIN') || #userId eq authentication.principal.id")
+    public ResponseEntity<Page<ChatRoomResponse>> getChatRooms(@RequestParam Long userId, Pageable pageable) {
+        return ResponseEntity.ok(chatRoomService.getChatRoomsByUserId(userId, pageable));
     }
 
     @PostMapping
     public ResponseEntity<ChatRoomResponse> createChatRoom(@RequestBody @Valid ChatRoomRequest chatRoomRequest, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        ChatRoomResponse chatRoomResponse = chatRoomService.createChatRoom(userPrincipal.getId(), chatRoomRequest.userId());
-        URI location = URI.create("/chatrooms/" + chatRoomResponse.id());
+        ChatRoomResponse chatRoomResponse = chatRoomService.createChatRoom(chatRoomRequest.userId(), userPrincipal.getId());
+        URI location = URI.create("/chat-rooms/" + chatRoomResponse.id());
 
         return ResponseEntity.created(location).body(chatRoomResponse);
     }
 
-    @MessageMapping("/chatrooms/{id}")
-    @SendTo("/sub/chatrooms/{id}")
+    @GetMapping("/{id}/chat-messages")
+    public ResponseEntity<Page<ChatMessageResponse>> getChatMessageByChatRoomId(@PathVariable Long id, Pageable pageable, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(chatMessageService.getChatMessagesByChatRoomId(id, pageable, userPrincipal.getId()));
+    }
+
+    @MessageMapping("/chat-rooms/{id}")
+    @SendTo("/sub/chat-rooms/{id}")
     public ChatMessageResponse broadcastProduct(@DestinationVariable Long id, ChatMessageRequest chatMessageRequest, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return chatMessageService.createChatMessage(id, userPrincipal.getId(), chatMessageRequest);
+        return chatMessageService.createChatMessage(id, chatMessageRequest, userPrincipal.getId());
     }
 
 }
