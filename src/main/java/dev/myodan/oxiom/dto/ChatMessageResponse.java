@@ -15,7 +15,7 @@ public record ChatMessageResponse(
 
         String content,
 
-        Instant createDate
+        Instant createdDate
 
 ) {
 }

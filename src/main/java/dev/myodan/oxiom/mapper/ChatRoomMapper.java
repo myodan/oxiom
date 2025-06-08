@@ -20,6 +20,7 @@ public interface ChatRoomMapper {
     ChatRoomResponse toResponse(ChatRoom chatRoom);
 
     @Mapping(target = "id", source = "chatRoom.id")
+    @Mapping(target = "createdDate", source = "chatRoom.createdDate")
     ChatRoomResponse toResponse(ChatRoom chatRoom, ChatMessage lastChatMessage);
 
 }
