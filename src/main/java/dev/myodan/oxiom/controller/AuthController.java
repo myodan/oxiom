@@ -51,4 +51,17 @@ public class AuthController {
                 .body(tokenResponse);
     }
 
+    @PostMapping("/token/invalidate")
+    public ResponseEntity<Void> invalidateToken(@CookieValue String refreshToken) {
+        authService.invalidateToken(refreshToken);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()).body(null);
+    }
+
 }

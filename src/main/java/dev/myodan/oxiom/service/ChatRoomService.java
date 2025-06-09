@@ -44,13 +44,28 @@ public class ChatRoomService {
                 .map(ChatRoom::getId)
                 .toList();
 
-        List<ChatMessage> latestMessages = chatMessageRepository.findAllLatestMessagesByChatRoomIds(chatRoomIds);
+        List<ChatMessage> latestMessages = chatMessageRepository.findLatestMessagesByChatRoomIds(chatRoomIds);
 
         Map<Long, ChatMessage> chatRoomIdToLatestMessage = latestMessages
                 .stream()
                 .collect(Collectors.toMap(ChatMessage::getChatRoomId, Function.identity()));
 
         return chatRooms.map((chatRoom) -> chatRoomMapper.toResponse(chatRoom, chatRoomIdToLatestMessage.get(chatRoom.getId())));
+    }
+
+    @Transactional(readOnly = true)
+    public ChatRoomResponse getChatRoomById(Long id, Long userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
+
+        ChatMessage lastChatMessage = chatMessageRepository.findFirstByChatRoomIdOrderByCreatedDate(chatRoom.getId());
+
+        if (!chatRoom.getUser1().getId().equals(userId) && !chatRoom.getUser2().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        return chatRoomMapper.toResponse(chatRoom, lastChatMessage);
     }
 
     @Transactional
@@ -72,5 +87,4 @@ public class ChatRoomService {
 
         return chatRoomMapper.toResponse(chatRoomRepository.save(chatRoom));
     }
-
 }

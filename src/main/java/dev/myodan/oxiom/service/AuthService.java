@@ -63,4 +63,8 @@ public class AuthService {
                 .build();
     }
 
+    public void invalidateToken(String refreshToken) {
+        stringRedisTemplate.delete("refresh-token:" + refreshToken);
+    }
+
 }

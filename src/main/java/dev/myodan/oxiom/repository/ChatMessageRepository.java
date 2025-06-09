@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
-    Page<ChatMessage> findAllByChatRoomId(Long chatRoomId, Pageable pageable);
+    Page<ChatMessage> findByChatRoomId(Long chatRoomId, Pageable pageable);
 
     @Aggregation(pipeline = {
             "{ '$match': { 'chatRoomId': { '$in': ?0 } } }",
@@ -20,6 +20,8 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
             "{ '$group': { '_id': '$chatRoomId', 'doc': { '$first': '$$ROOT' } } }",
             "{ '$replaceRoot': { 'newRoot': '$doc' } }"
     })
-    List<ChatMessage> findAllLatestMessagesByChatRoomIds(List<Long> chatRoomIds);
+    List<ChatMessage> findLatestMessagesByChatRoomIds(List<Long> chatRoomIds);
+
+    ChatMessage findFirstByChatRoomIdOrderByCreatedDate(Long chatRoomId);
 
 }

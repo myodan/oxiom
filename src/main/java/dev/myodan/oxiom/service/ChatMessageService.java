@@ -32,7 +32,7 @@ public class ChatMessageService {
             throw new AccessDeniedException("해당 채팅방에 참여한 유저가 아닙니다.");
         }
 
-        return chatMessageRepository.findAllByChatRoomId(chatRoomId, pageable).map(chatMessageMapper::toResponse);
+        return chatMessageRepository.findByChatRoomId(chatRoomId, pageable).map(chatMessageMapper::toResponse);
     }
 
     public ChatMessageResponse createChatMessage(Long chatRoomId, ChatMessageRequest chatMessageRequest, Long userId) {

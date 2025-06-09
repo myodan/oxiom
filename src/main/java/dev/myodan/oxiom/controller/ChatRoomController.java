@@ -1,10 +1,7 @@
 package dev.myodan.oxiom.controller;
 
 import dev.myodan.oxiom.domain.UserPrincipal;
-import dev.myodan.oxiom.dto.ChatMessageRequest;
-import dev.myodan.oxiom.dto.ChatMessageResponse;
-import dev.myodan.oxiom.dto.ChatRoomRequest;
-import dev.myodan.oxiom.dto.ChatRoomResponse;
+import dev.myodan.oxiom.dto.*;
 import dev.myodan.oxiom.service.ChatMessageService;
 import dev.myodan.oxiom.service.ChatRoomService;
 import jakarta.validation.Valid;
@@ -35,6 +32,11 @@ public class ChatRoomController {
     @PreAuthorize("hasRole('ADMIN') || #userId eq authentication.principal.id")
     public ResponseEntity<Page<ChatRoomResponse>> getChatRooms(@RequestParam Long userId, Pageable pageable) {
         return ResponseEntity.ok(chatRoomService.getChatRoomsByUserId(userId, pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ChatRoomResponse> getChatRoom(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal user) {
+        return ResponseEntity.ok(chatRoomService.getChatRoomById(id, user.getId()));
     }
 
     @PostMapping
