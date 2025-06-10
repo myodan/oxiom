@@ -59,7 +59,7 @@ public class ChatRoomService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
 
-        ChatMessage lastChatMessage = chatMessageRepository.findFirstByChatRoomIdOrderByCreatedDate(chatRoom.getId());
+        ChatMessage lastChatMessage = chatMessageRepository.findFirstByChatRoomIdOrderByCreatedDateDesc(chatRoom.getId());
 
         if (!chatRoom.getUser1().getId().equals(userId) && !chatRoom.getUser2().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);

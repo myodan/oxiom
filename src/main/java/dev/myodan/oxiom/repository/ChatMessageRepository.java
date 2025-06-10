@@ -16,12 +16,12 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
 
     @Aggregation(pipeline = {
             "{ '$match': { 'chatRoomId': { '$in': ?0 } } }",
-            "{ '$sort': { 'createDate': -1 } }",
+            "{ '$sort': { 'createdDate': -1 } }",
             "{ '$group': { '_id': '$chatRoomId', 'doc': { '$first': '$$ROOT' } } }",
             "{ '$replaceRoot': { 'newRoot': '$doc' } }"
     })
     List<ChatMessage> findLatestMessagesByChatRoomIds(List<Long> chatRoomIds);
 
-    ChatMessage findFirstByChatRoomIdOrderByCreatedDate(Long chatRoomId);
+    ChatMessage findFirstByChatRoomIdOrderByCreatedDateDesc(Long chatRoomId);
 
 }
