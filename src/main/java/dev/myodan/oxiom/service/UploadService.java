@@ -28,7 +28,7 @@ public class UploadService {
                 .signatureDuration(duration)
                 .putObjectRequest(builder -> builder
                         .bucket(bucketName)
-                        .key(objectKey)
+                        .key("temp/" + objectKey)
                         .build()
                 )
                 .build();
