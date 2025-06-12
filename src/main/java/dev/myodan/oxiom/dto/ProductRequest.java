@@ -2,10 +2,7 @@ package dev.myodan.oxiom.dto;
 
 import dev.myodan.oxiom.domain.Category;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -31,7 +28,7 @@ public record ProductRequest(
         Long bidUnit,
 
         @NotNull
-        @Positive
+        @PositiveOrZero
         Long initialPrice,
 
         @NotNull

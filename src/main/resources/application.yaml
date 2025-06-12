@@ -13,8 +13,6 @@ spring:
       uri: ${MONGODB_URL}
     redis:
       url: ${REDIS_URL}
-      ssl:
-        enabled: ${REDIS_SSL_ENABLED:false}
   jpa:
     open-in-view: false
     hibernate:
@@ -30,6 +28,7 @@ spring:
         format_sql: true
         highlight_sql: true
 jwt:
+  cookie-secure: ${JWT_COOKIE_SECURE:true}
   secret: ${JWT_SECRET_STRING}
   expiration-ms: ${JWT_EXPIRATION_MS:360000}
 s3:
@@ -38,3 +37,5 @@ s3:
   secret-key: ${S3_SECRET_KEY}
   bucket: ${S3_BUCKET}
   public-uri: ${S3_PUBLIC_URI}
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}

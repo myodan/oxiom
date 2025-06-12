@@ -5,6 +5,8 @@ import dev.myodan.oxiom.dto.TokenResponse;
 import dev.myodan.oxiom.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ import java.time.Duration;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    @Value("${jwt.cookie-secure}")
+    private boolean cookieSecure;
 
     private final AuthService authService;
 
@@ -44,6 +49,8 @@ public class AuthController {
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .httpOnly(true)
+                .secure(cookieSecure)
+                .sameSite(Cookie.SameSite.LAX.name())
                 .build();
 
         return ResponseEntity.ok()
@@ -59,6 +66,8 @@ public class AuthController {
                 .path("/")
                 .maxAge(0)
                 .httpOnly(true)
+                .secure(cookieSecure)
+                .sameSite(Cookie.SameSite.LAX.name())
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()).body(null);

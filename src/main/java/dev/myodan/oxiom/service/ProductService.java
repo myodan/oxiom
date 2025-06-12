@@ -43,6 +43,9 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
 
         for (ProductImage productImage : savedProduct.getImages()) {
+            if (productImage.getObjectKey().startsWith("http")) {
+                continue;
+            }
             List<String> objectKeyParts = List.of(productImage.getObjectKey().split("/"));
             String newObjectKey = String.format("products/%s/%s", savedProduct.getId(), objectKeyParts.getLast());
             uploadService.moveObject(productImage.getObjectKey(), newObjectKey);
