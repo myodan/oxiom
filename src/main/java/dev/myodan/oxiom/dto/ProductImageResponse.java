@@ -7,7 +7,7 @@ public record ProductImageResponse(
 
         Long id,
 
-        String url,
+        String objectKey,
 
         Integer order
 

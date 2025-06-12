@@ -20,12 +20,12 @@ public class UploadController {
 
     @PostMapping("/pre-signed-url")
     public ResponseEntity<UploadResponse> upload() {
-        String uniqueFileName = UUID.randomUUID().toString();
+        String objectKey = String.format("temp/%s", UUID.randomUUID());
         Duration duration = Duration.ofMinutes(10);
 
         return ResponseEntity.ok(UploadResponse.builder()
-                .url(uploadService.generatePresignedUploadUrl(uniqueFileName, duration))
-                .key(uniqueFileName)
+                .url(uploadService.generatePresignedUploadUrl(objectKey, duration))
+                .key(objectKey)
                 .expiresIn(duration.toSeconds())
                 .build()
         );

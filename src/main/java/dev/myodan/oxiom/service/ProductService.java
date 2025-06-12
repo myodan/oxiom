@@ -1,6 +1,7 @@
 package dev.myodan.oxiom.service;
 
 import dev.myodan.oxiom.domain.Product;
+import dev.myodan.oxiom.domain.ProductImage;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
 import dev.myodan.oxiom.dto.ProductSummaryResponse;
@@ -12,12 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final UploadService uploadService;
 
     @Transactional(readOnly = true)
     public Page<ProductSummaryResponse> getProducts(String keyword, Long categoryId, Pageable pageable) {
@@ -37,6 +41,13 @@ public class ProductService {
         product.setCurrentPrice(product.getInitialPrice());
 
         Product savedProduct = productRepository.save(product);
+
+        for (ProductImage productImage : savedProduct.getImages()) {
+            List<String> objectKeyParts = List.of(productImage.getObjectKey().split("/"));
+            String newObjectKey = String.format("products/%s/%s", savedProduct.getId(), objectKeyParts.getLast());
+            uploadService.moveObject(productImage.getObjectKey(), newObjectKey);
+            productImage.setObjectKey(newObjectKey);
+        }
 
         return productMapper.toResponse(savedProduct);
     }

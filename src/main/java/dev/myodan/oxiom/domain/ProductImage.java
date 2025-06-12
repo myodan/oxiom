@@ -28,7 +28,7 @@ public class ProductImage {
     private Product product;
 
     @Column(columnDefinition = "text", nullable = false)
-    private String url;
+    private String objectKey;
 
     @Column(nullable = false)
     private Integer order;
