@@ -10,6 +10,7 @@ import dev.myodan.oxiom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class BidService {
     private final BidRepository bidRepository;
     private final BidMapper bidMapper;
     private final ProductRepository productRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional(readOnly = true)
     public Page<BidResponse> getBidsByProductId(Long productId, Pageable pageable) {
@@ -41,7 +43,11 @@ public class BidService {
 
         product.setCurrentPrice(bidRequest.price());
 
-        return bidMapper.toResponse(bidRepository.save(bid));
+        BidResponse bidResponse = bidMapper.toResponse(bidRepository.save(bid));
+
+        simpMessagingTemplate.convertAndSend(String.format("/sub/products/%d", productId), bidResponse);
+
+        return bidResponse;
     }
 
 }
