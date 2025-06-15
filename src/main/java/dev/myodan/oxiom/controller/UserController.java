@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') || #id eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') || #id eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id eq authentication.principal.id")
     public ResponseEntity<UserResponse> partialUpdateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(userService.partialUpdateUser(id, userUpdateRequest));
     }

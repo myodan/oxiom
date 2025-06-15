@@ -8,13 +8,16 @@ import dev.myodan.oxiom.dto.ProductSummaryResponse;
 import dev.myodan.oxiom.mapper.ProductMapper;
 import dev.myodan.oxiom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -53,6 +56,13 @@ public class ProductService {
         }
 
         return productMapper.toResponse(savedProduct);
+    }
+
+    @Scheduled(cron = "* */10 * * * *")
+    @Transactional
+    public void updateStatus() {
+        productRepository.updateStatusToFailedForOpenProductsWithoutBidder();
+        productRepository.updateStatusForEndedOpenProducts();
     }
 
 }

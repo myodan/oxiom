@@ -1,6 +1,7 @@
 package dev.myodan.oxiom.mapper;
 
 import dev.myodan.oxiom.domain.Product;
+import dev.myodan.oxiom.domain.Product.Status;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
 import dev.myodan.oxiom.dto.ProductSummaryResponse;
@@ -26,6 +27,13 @@ public interface ProductMapper {
     @AfterMapping
     default void linkImages(@MappingTarget Product product) {
         product.getImages().forEach(image -> image.setProduct(product));
+    }
+
+    @AfterMapping
+    default void setDefaultStatus(@MappingTarget Product product) {
+        if (product.getStatus() == null) {
+            product.setStatus(Status.OPEN);
+        }
     }
 
 }

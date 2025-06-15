@@ -2,6 +2,7 @@ package dev.myodan.oxiom.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -59,6 +60,11 @@ public class Product {
     @JoinColumn(nullable = false)
     private Category category;
 
+    @Column(columnDefinition = "text", nullable = false)
+    @ColumnDefault("'OPEN'")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.OPEN;
+
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false, updatable = false)
@@ -67,5 +73,12 @@ public class Product {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdDate;
+
+    public enum Status {
+        OPEN,
+        CLOSED,
+        ENDED,
+        FAILED
+    }
 
 }

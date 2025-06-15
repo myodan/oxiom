@@ -4,9 +4,11 @@ import dev.myodan.oxiom.domain.Bid;
 import dev.myodan.oxiom.domain.Product;
 import dev.myodan.oxiom.dto.BidRequest;
 import dev.myodan.oxiom.dto.BidResponse;
+import dev.myodan.oxiom.dto.BidSearch;
 import dev.myodan.oxiom.mapper.BidMapper;
 import dev.myodan.oxiom.repository.BidRepository;
 import dev.myodan.oxiom.repository.ProductRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +26,10 @@ public class BidService {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional(readOnly = true)
-    public Page<BidResponse> getBidsByProductId(Long productId, Pageable pageable) {
-        return bidRepository.findAllByProductId(productId, pageable).map(bidMapper::toResponse);
+    public Page<BidResponse> getBids(@Nullable BidSearch bidSearch, Pageable pageable) {
+        Long userId = bidSearch != null ? bidSearch.userId() : null;
+        Long productId = bidSearch != null ? bidSearch.productId() : null;
+        return bidRepository.findAll(userId, productId, pageable).map(bidMapper::toResponse);
     }
 
     @Transactional

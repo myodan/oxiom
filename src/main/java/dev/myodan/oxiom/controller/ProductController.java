@@ -44,7 +44,7 @@ public class ProductController {
 
     @GetMapping("/{id}/bids")
     public ResponseEntity<Page<BidResponse>> getProductBids(@PathVariable Long id, Pageable pageable) {
-        return ResponseEntity.ok(bidService.getBidsByProductId(id, pageable));
+        return ResponseEntity.ok(bidService.getBids(BidSearch.builder().productId(id).build(), pageable));
     }
 
     @PostMapping("/{id}/bids")

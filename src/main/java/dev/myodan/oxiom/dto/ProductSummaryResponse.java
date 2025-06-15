@@ -2,6 +2,8 @@ package dev.myodan.oxiom.dto;
 
 import java.time.Instant;
 
+import static dev.myodan.oxiom.domain.Product.Status;
+
 public record ProductSummaryResponse(
 
         Long id,
@@ -23,6 +25,8 @@ public record ProductSummaryResponse(
         Instant endDate,
 
         CategoryResponse category,
+
+        Status status,
 
         UserResponse createdBy,
 

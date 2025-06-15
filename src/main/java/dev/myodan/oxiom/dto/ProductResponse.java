@@ -1,5 +1,6 @@
 package dev.myodan.oxiom.dto;
 
+import dev.myodan.oxiom.domain.Product.Status;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -29,6 +30,8 @@ public record ProductResponse(
         Instant endDate,
 
         CategoryResponse category,
+
+        Status status,
 
         UserResponse createdBy,
 

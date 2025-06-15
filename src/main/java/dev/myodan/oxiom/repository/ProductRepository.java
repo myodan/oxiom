@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,30 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @EntityGraph(attributePaths = {"images", "highestBidder", "category", "createdBy"})
     Optional<Product> findOneById(Long id);
+
+    @Query("""
+            update
+                Product p
+            set
+                p.status = 'FAILED'
+            where
+                p.endDate <= current_timestamp and
+                p.status = 'OPEN' and
+                p.highestBidder is null
+            """)
+    @Modifying
+    void updateStatusToFailedForOpenProductsWithoutBidder();
+
+    @Query("""
+            update
+                Product p
+            set
+                p.status = 'CLOSED'
+            where
+                p.endDate <= current_timestamp and
+                p.status = 'OPEN'
+            """)
+    @Modifying
+    void updateStatusForEndedOpenProducts();
 
 }

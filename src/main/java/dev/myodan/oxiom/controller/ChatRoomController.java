@@ -29,7 +29,7 @@ public class ChatRoomController {
     private final ChatMessageService chatMessageService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') || #userId eq authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #userId eq authentication.principal.id")
     public ResponseEntity<Page<ChatRoomResponse>> getChatRooms(@RequestParam Long userId, Pageable pageable) {
         return ResponseEntity.ok(chatRoomService.getChatRoomsByUserId(userId, pageable));
     }
