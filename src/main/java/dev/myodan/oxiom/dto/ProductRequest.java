@@ -17,9 +17,6 @@ public record ProductRequest(
         @NotBlank
         String description,
 
-        @NotBlank
-        String thumbnailUrl,
-
         @NotNull
         List<@Valid ProductImageRequest> images,
 

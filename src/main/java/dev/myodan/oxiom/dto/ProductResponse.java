@@ -15,7 +15,7 @@ public record ProductResponse(
 
         String description,
 
-        String thumbnailUrl,
+        String thumbnail,
 
         List<ProductImageResponse> images,
 
@@ -35,7 +35,9 @@ public record ProductResponse(
 
         UserResponse createdBy,
 
-        Instant createdDate
+        Instant createdDate,
+
+        Instant lastModifiedDate
 
 ) {
 }

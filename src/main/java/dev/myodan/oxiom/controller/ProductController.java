@@ -1,5 +1,6 @@
 package dev.myodan.oxiom.controller;
 
+import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.dto.*;
 import dev.myodan.oxiom.service.BidService;
 import dev.myodan.oxiom.service.ProductService;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -43,13 +45,13 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/bids")
-    public ResponseEntity<Page<BidResponse>> getProductBids(@PathVariable Long id, Pageable pageable) {
-        return ResponseEntity.ok(bidService.getBids(BidSearch.builder().productId(id).build(), pageable));
+    public ResponseEntity<Page<ProductBidResponse>> getProductBids(@PathVariable Long id, Pageable pageable) {
+        return ResponseEntity.ok(bidService.getBidsByProductId(id, pageable));
     }
 
     @PostMapping("/{id}/bids")
-    public ResponseEntity<BidResponse> createProductBid(@PathVariable Long id, @RequestBody @Valid BidRequest bidRequest) {
-        BidResponse bidResponse = bidService.createBid(id, bidRequest);
+    public ResponseEntity<BidResponse> createProductBid(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long id, @RequestBody @Valid BidRequest bidRequest) {
+        BidResponse bidResponse = bidService.createBid(userPrincipal, id, bidRequest);
         URI location = URI.create("/products/" + id + "/bids");
 
         return ResponseEntity.created(location).body(bidResponse);

@@ -1,9 +1,9 @@
 package dev.myodan.oxiom.controller;
 
 import dev.myodan.oxiom.domain.UserPrincipal;
-import dev.myodan.oxiom.dto.UserCreateRequest;
-import dev.myodan.oxiom.dto.UserResponse;
-import dev.myodan.oxiom.dto.UserUpdateRequest;
+import dev.myodan.oxiom.dto.*;
+import dev.myodan.oxiom.service.BidService;
+import dev.myodan.oxiom.service.ProductService;
 import dev.myodan.oxiom.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,8 @@ import java.net.URI;
 public class UserController {
 
     private final UserService userService;
+    private final BidService bidService;
+    private final ProductService productService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -52,6 +54,16 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getUserByMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(userService.getUser(userPrincipal.getId()));
+    }
+
+    @GetMapping("/me/products")
+    public ResponseEntity<Page<UserProductResponse>> getUserProducts(@AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable) {
+        return ResponseEntity.ok(productService.getProductsByCreatedById(userPrincipal.getId(), pageable));
+    }
+
+    @GetMapping("/me/bids")
+    public ResponseEntity<Page<UserBidResponse>> getUserBids(@AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable) {
+        return ResponseEntity.ok(bidService.getBidsByUserId(userPrincipal.getId(), pageable));
     }
 
 }

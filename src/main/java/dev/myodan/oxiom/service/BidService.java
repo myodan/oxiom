@@ -2,13 +2,14 @@ package dev.myodan.oxiom.service;
 
 import dev.myodan.oxiom.domain.Bid;
 import dev.myodan.oxiom.domain.Product;
+import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.dto.BidRequest;
 import dev.myodan.oxiom.dto.BidResponse;
-import dev.myodan.oxiom.dto.BidSearch;
+import dev.myodan.oxiom.dto.ProductBidResponse;
+import dev.myodan.oxiom.dto.UserBidResponse;
 import dev.myodan.oxiom.mapper.BidMapper;
 import dev.myodan.oxiom.repository.BidRepository;
 import dev.myodan.oxiom.repository.ProductRepository;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +27,17 @@ public class BidService {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional(readOnly = true)
-    public Page<BidResponse> getBids(@Nullable BidSearch bidSearch, Pageable pageable) {
-        Long userId = bidSearch != null ? bidSearch.userId() : null;
-        Long productId = bidSearch != null ? bidSearch.productId() : null;
-        return bidRepository.findAll(userId, productId, pageable).map(bidMapper::toResponse);
+    public Page<ProductBidResponse> getBidsByProductId(Long productId, Pageable pageable) {
+        return bidRepository.findAllByProductId(productId, pageable).map(bidMapper::toProductBidResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserBidResponse> getBidsByUserId(Long userId, Pageable pageable) {
+        return bidRepository.findAllByCreatedById(userId, pageable).map(bidMapper::toUserBidResponse);
     }
 
     @Transactional
-    public BidResponse createBid(Long productId, BidRequest bidRequest) {
+    public BidResponse createBid(UserPrincipal userPrincipal, Long productId, BidRequest bidRequest) {
         Product product = productRepository.findOneById(productId).orElseThrow(
                 () -> new IllegalArgumentException("상품을 찾을 수 없습니다.")
         );
@@ -45,6 +49,7 @@ public class BidService {
         Bid bid = bidMapper.toEntity(bidRequest);
         bid.setProduct(product);
 
+        product.setHighestBidder(userPrincipal.getUser());
         product.setCurrentPrice(bidRequest.price());
 
         BidResponse bidResponse = bidMapper.toResponse(bidRepository.save(bid));

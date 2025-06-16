@@ -5,6 +5,7 @@ import dev.myodan.oxiom.domain.Product.Status;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
 import dev.myodan.oxiom.dto.ProductSummaryResponse;
+import dev.myodan.oxiom.dto.UserProductResponse;
 import org.mapstruct.*;
 
 @Mapper(
@@ -23,6 +24,8 @@ public interface ProductMapper {
     ProductResponse toResponse(Product product);
 
     ProductSummaryResponse toSummaryResponse(Product product);
+
+    UserProductResponse toUserProductResponse(Product product);
 
     @AfterMapping
     default void linkImages(@MappingTarget Product product) {

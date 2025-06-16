@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
@@ -31,7 +32,7 @@ public class Product {
     private String description;
 
     @Column(columnDefinition = "text")
-    private String thumbnailUrl;
+    private String thumbnail;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("order asc")
@@ -73,6 +74,9 @@ public class Product {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdDate;
+
+    @LastModifiedDate
+    private Instant lastModifiedDate;
 
     public enum Status {
         OPEN,

@@ -5,6 +5,7 @@ import dev.myodan.oxiom.domain.ProductImage;
 import dev.myodan.oxiom.dto.ProductRequest;
 import dev.myodan.oxiom.dto.ProductResponse;
 import dev.myodan.oxiom.dto.ProductSummaryResponse;
+import dev.myodan.oxiom.dto.UserProductResponse;
 import dev.myodan.oxiom.mapper.ProductMapper;
 import dev.myodan.oxiom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +28,20 @@ public class ProductService {
     private final UploadService uploadService;
 
     @Transactional(readOnly = true)
+    public ProductResponse getProduct(Long id) {
+        return productRepository.findOneById(id).map(productMapper::toResponse).orElseThrow(
+                () -> new IllegalArgumentException("Product not found.")
+        );
+    }
+
+    @Transactional(readOnly = true)
     public Page<ProductSummaryResponse> getProducts(String keyword, Long categoryId, Pageable pageable) {
         return productRepository.findAllByKeywordAndCategoryId(keyword, categoryId, pageable).map(productMapper::toSummaryResponse);
     }
 
     @Transactional(readOnly = true)
-    public ProductResponse getProduct(Long id) {
-        return productRepository.findOneById(id).map(productMapper::toResponse).orElseThrow(
-                () -> new IllegalArgumentException("Product not found.")
-        );
+    public Page<UserProductResponse> getProductsByCreatedById(Long createdById, Pageable pageable) {
+        return productRepository.findAllByCreatedById(createdById, pageable).map(productMapper::toUserProductResponse);
     }
 
     @Transactional
@@ -55,10 +61,12 @@ public class ProductService {
             productImage.setObjectKey(newObjectKey);
         }
 
+        savedProduct.setThumbnail(savedProduct.getImages().getFirst().getObjectKey());
+
         return productMapper.toResponse(savedProduct);
     }
 
-    @Scheduled(cron = "* */10 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void updateStatus() {
         productRepository.updateStatusToFailedForOpenProductsWithoutBidder();

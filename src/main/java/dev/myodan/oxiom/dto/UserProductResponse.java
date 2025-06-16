@@ -1,10 +1,10 @@
 package dev.myodan.oxiom.dto;
 
+import dev.myodan.oxiom.domain.Product.Status;
+
 import java.time.Instant;
 
-import static dev.myodan.oxiom.domain.Product.Status;
-
-public record ProductSummaryResponse(
+public record UserProductResponse(
 
         Long id,
 
@@ -27,8 +27,6 @@ public record ProductSummaryResponse(
         CategoryResponse category,
 
         Status status,
-
-        UserResponse createdBy,
 
         Instant createdDate,
 

@@ -14,6 +14,9 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @EntityGraph(attributePaths = {"images", "highestBidder", "category", "createdBy"})
+    Optional<Product> findOneById(Long id);
+
     @Query("""
             select p
             from Product p
@@ -24,8 +27,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"highestBidder", "category", "createdBy"})
     Page<Product> findAllByKeywordAndCategoryId(String keyword, Long categoryId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"images", "highestBidder", "category", "createdBy"})
-    Optional<Product> findOneById(Long id);
+    @EntityGraph(attributePaths = {"highestBidder", "category"})
+    Page<Product> findAllByCreatedById(Long createdById, Pageable pageable);
 
     @Query("""
             update

@@ -1,12 +1,13 @@
 package dev.myodan.oxiom.dto;
 
+import lombok.Builder;
+
 import java.time.Instant;
 
-public record BidResponse(
+@Builder
+public record ProductBidResponse(
 
         Long id,
-
-        ProductSummaryResponse product,
 
         Long price,
 
