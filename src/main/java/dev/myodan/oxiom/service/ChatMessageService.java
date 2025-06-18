@@ -24,7 +24,7 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
 
     public Page<ChatMessageResponse> getChatMessagesByChatRoomId(Long chatRoomId, Pageable pageable, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(
+        ChatRoom chatRoom = chatRoomRepository.findOneById(chatRoomId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "채팅방이 존재하지 않습니다.")
         );
 

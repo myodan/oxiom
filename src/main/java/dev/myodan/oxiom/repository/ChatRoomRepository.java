@@ -1,7 +1,6 @@
 package dev.myodan.oxiom.repository;
 
 import dev.myodan.oxiom.domain.ChatRoom;
-import dev.myodan.oxiom.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,11 +13,11 @@ import java.util.Optional;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     @EntityGraph(attributePaths = {"user1", "user2"})
-    Page<ChatRoom> findByUser1IdOrUser2Id(Long user1Id, Long user2Id, Pageable pageable);
+    Page<ChatRoom> findAllByUser1IdOrUser2Id(Long user1Id, Long user2Id, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user1", "user2"})
-    Optional<ChatRoom> findById(Long id);
+    Optional<ChatRoom> findOneById(Long id);
 
-    boolean existsByUser1AndUser2(User user1, User user2);
+    Optional<ChatRoom> findOneByUser1IdAndUser2Id(Long user1Id, Long user2Id);
 
 }

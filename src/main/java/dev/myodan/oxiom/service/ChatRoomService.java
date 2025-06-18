@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public Page<ChatRoomResponse> getChatRoomsByUserId(Long userId, Pageable pageable) {
-        Page<ChatRoom> chatRooms = chatRoomRepository.findByUser1IdOrUser2Id(userId, userId, pageable);
+        Page<ChatRoom> chatRooms = chatRoomRepository.findAllByUser1IdOrUser2Id(userId, userId, pageable);
 
         if (!chatRooms.hasContent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "참여하고있는 채팅방이 없습니다.");
@@ -55,7 +56,7 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public ChatRoomResponse getChatRoomById(Long id, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(
+        ChatRoom chatRoom = chatRoomRepository.findOneById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
         );
 
@@ -72,12 +73,18 @@ public class ChatRoomService {
     public ChatRoomResponse createChatRoom(Long user1Id, Long user2Id) {
         List<User> users = userRepository.findAllByIdInOrderById(List.of(user1Id, user2Id));
 
+        if (user1Id.equals(user2Id)) {
+            throw new IllegalArgumentException("동일 사용자 입니다.");
+        }
+
         if (users.size() != 2) {
             throw new IllegalArgumentException("사용자 중 한 명 이상이 존재하지 않습니다.");
         }
 
-        if (chatRoomRepository.existsByUser1AndUser2(users.getFirst(), users.getLast())) {
-            throw new IllegalArgumentException("이미 동일한 채팅방이 존재합니다.");
+        Optional<ChatRoom> findedChatRoom = chatRoomRepository.findOneByUser1IdAndUser2Id(users.getFirst().getId(), users.getLast().getId());
+
+        if (findedChatRoom.isPresent()) {
+            return chatRoomMapper.toResponse(findedChatRoom.get());
         }
 
         ChatRoom chatRoom = ChatRoom.builder()
