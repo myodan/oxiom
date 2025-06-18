@@ -61,6 +61,7 @@ public class Product {
     @JoinColumn(nullable = false)
     private Category category;
 
+    @Builder.Default
     @Column(columnDefinition = "text", nullable = false)
     @ColumnDefault("'OPEN'")
     @Enumerated(EnumType.STRING)

@@ -10,12 +10,14 @@ import dev.myodan.oxiom.mapper.ProductMapper;
 import dev.myodan.oxiom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -26,6 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final UploadService uploadService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Long id) {
@@ -66,11 +69,15 @@ public class ProductService {
         return productMapper.toResponse(savedProduct);
     }
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "*/10 * * * * *")
     @Transactional
     public void updateStatus() {
-        productRepository.updateStatusToFailedForOpenProductsWithoutBidder();
-        productRepository.updateStatusForEndedOpenProducts();
+        log.info("updateStatus");
+        List<Product> products = productRepository.findAllByEndDateLessThanEqualAndStatus(Instant.now(), Product.Status.OPEN);
+        products.forEach(applicationEventPublisher::publishEvent);
+
+//        productRepository.updateStatusToFailedForOpenProductsWithoutBidder();
+//        productRepository.updateStatusForEndedOpenProducts();
     }
 
 }

@@ -20,9 +20,10 @@ public class Notification {
 
     private Long userId;
 
-    private String message;
+    private String content;
 
-    private Boolean isRead;
+    @Builder.Default
+    private Boolean isRead = false;
 
     @CreatedDate
     private Instant createdDate;

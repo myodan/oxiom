@@ -24,9 +24,9 @@ spring:
         order_inserts: true
         order_updates: true
         globally_quoted_identifiers: true
-        show_sql: true
-        format_sql: true
-        highlight_sql: true
+#        show_sql: true
+#        format_sql: true
+#        highlight_sql: true
 jwt:
   cookie-secure: ${JWT_COOKIE_SECURE:true}
   secret: ${JWT_SECRET_STRING}
@@ -39,3 +39,12 @@ s3:
   public-uri: ${S3_PUBLIC_URI}
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        messaging:
+#          simp:
+#            user:
+#              UserDestinationMessageHandler: trace
