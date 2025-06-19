@@ -69,15 +69,15 @@ public class ProductService {
         return productMapper.toResponse(savedProduct);
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void updateStatus() {
         log.info("updateStatus");
         List<Product> products = productRepository.findAllByEndDateLessThanEqualAndStatus(Instant.now(), Product.Status.OPEN);
         products.forEach(applicationEventPublisher::publishEvent);
 
-//        productRepository.updateStatusToFailedForOpenProductsWithoutBidder();
-//        productRepository.updateStatusForEndedOpenProducts();
+        productRepository.updateStatusToFailedForOpenProductsWithoutBidder();
+        productRepository.updateStatusForEndedOpenProducts();
     }
 
 }

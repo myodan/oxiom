@@ -25,7 +25,6 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/sub");
         registry.setApplicationDestinationPrefixes("/pub");
-        registry.setUserDestinationPrefix("/user");
     }
 
     @Override

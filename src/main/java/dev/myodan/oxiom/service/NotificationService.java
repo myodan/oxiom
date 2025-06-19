@@ -5,14 +5,12 @@ import dev.myodan.oxiom.domain.Product;
 import dev.myodan.oxiom.domain.User;
 import dev.myodan.oxiom.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
@@ -22,7 +20,6 @@ public class NotificationService {
 
     @EventListener
     public void endedProductEvent(Product product) {
-        log.info("endedProductEvent: {}", product.getId());
         boolean isFailed = product.getHighestBidder() == null;
 
         if (!isFailed) {
@@ -34,8 +31,7 @@ public class NotificationService {
                     .build();
 
             Notification savedNotification = notificationRepository.save(notification);
-            simpMessagingTemplate.convertAndSendToUser(highestBidder.getUsername(), "/notify", savedNotification);
-            log.info("Notification sent to user: {}", highestBidder.getUsername());
+            simpMessagingTemplate.convertAndSend("/sub/notify/" + highestBidder.getUsername(), savedNotification);
         }
 
         Notification notification = Notification.builder()
@@ -44,8 +40,7 @@ public class NotificationService {
                 .build();
 
         Notification savedNotification = notificationRepository.save(notification);
-        simpMessagingTemplate.convertAndSendToUser(product.getCreatedBy().getUsername(), "/notify", savedNotification);
-        log.info("Notification sent to user: {}", product.getCreatedBy().getUsername());
+        simpMessagingTemplate.convertAndSend("/sub/notify/" + product.getCreatedBy().getUsername(), savedNotification);
     }
 
 }

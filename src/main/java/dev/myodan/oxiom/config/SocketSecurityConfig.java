@@ -13,7 +13,7 @@ public class SocketSecurityConfig extends AbstractSecurityWebSocketMessageBroker
                 .nullDestMatcher().permitAll()
                 .simpSubscribeDestMatchers("/user/**").authenticated()
                 .simpSubscribeDestMatchers("/sub/products/**").permitAll()
-                .simpSubscribeDestMatchers("/sub/chat-rooms/**").authenticated()
+                .simpSubscribeDestMatchers("/sub/chat-rooms/**", "/sub/notify/**").authenticated()
                 .simpDestMatchers("/pub/chat-rooms/**").authenticated()
                 .anyMessage().denyAll();
     }
