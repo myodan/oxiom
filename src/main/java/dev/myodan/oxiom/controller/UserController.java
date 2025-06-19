@@ -3,6 +3,7 @@ package dev.myodan.oxiom.controller;
 import dev.myodan.oxiom.domain.UserPrincipal;
 import dev.myodan.oxiom.dto.*;
 import dev.myodan.oxiom.service.BidService;
+import dev.myodan.oxiom.service.NotificationService;
 import dev.myodan.oxiom.service.ProductService;
 import dev.myodan.oxiom.service.UserService;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ public class UserController {
     private final UserService userService;
     private final BidService bidService;
     private final ProductService productService;
+    private final NotificationService notificationService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,6 +56,11 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getUserByMe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(userService.getUser(userPrincipal.getId()));
+    }
+
+    @GetMapping("/me/notifications")
+    public ResponseEntity<Page<NotificationResponse>> getUserNotifications(@AuthenticationPrincipal UserPrincipal userPrincipal, Pageable pageable) {
+        return  ResponseEntity.ok(notificationService.getNotificationsByUserId(userPrincipal.getId(), pageable));
     }
 
     @GetMapping("/me/products")

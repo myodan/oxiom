@@ -12,7 +12,7 @@ public interface NotificationMapper {
 
     Notification toEntity(NotificationResponse notificationResponse);
 
-    NotificationResponse toDto(Notification notification);
+    NotificationResponse toResponse(Notification notification);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Notification partialUpdate(NotificationResponse notificationResponse, @MappingTarget Notification notification);

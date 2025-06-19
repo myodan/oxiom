@@ -3,9 +3,13 @@ package dev.myodan.oxiom.service;
 import dev.myodan.oxiom.domain.Notification;
 import dev.myodan.oxiom.domain.Product;
 import dev.myodan.oxiom.domain.User;
+import dev.myodan.oxiom.dto.NotificationResponse;
+import dev.myodan.oxiom.mapper.NotificationMapper;
 import dev.myodan.oxiom.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,7 @@ public class NotificationService {
 
     protected final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final NotificationMapper notificationMapper;
 
     @EventListener
     public void endedProductEvent(Product product) {
@@ -43,4 +48,7 @@ public class NotificationService {
         simpMessagingTemplate.convertAndSend("/sub/notify/" + product.getCreatedBy().getUsername(), savedNotification);
     }
 
+    public Page<NotificationResponse> getNotificationsByUserId(Long id, Pageable pageable) {
+        return notificationRepository.findAllByUserId(id, pageable).map(notificationMapper::toResponse);
+    }
 }
